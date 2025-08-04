@@ -3,6 +3,9 @@ package com.example.todo.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.*;
 
 @Entity
@@ -21,6 +24,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
 

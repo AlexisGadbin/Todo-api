@@ -4,6 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Data
 public class Task {
@@ -15,6 +17,7 @@ public class Task {
     private String description;
     private boolean done;
 
+    @JsonBackReference
     @ManyToOne
     private User owner;
 }
