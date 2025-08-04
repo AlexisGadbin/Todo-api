@@ -20,7 +20,8 @@ public class UserConfig {
     }
 
     @Bean
-    public UserService bean(final UserRepository userRepository, final PasswordEncoder passwordEncoder) throws Exception {
+    public UserService userService(final UserRepository userRepository, final PasswordEncoder passwordEncoder)
+            throws Exception {
         return new UserService(userRepository, passwordEncoder);
     }
 }

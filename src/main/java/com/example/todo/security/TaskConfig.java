@@ -14,7 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class TaskConfig {
 
     @Bean
-    public TaskService bean(final TaskRepository taskRepository, final UserService userService) throws Exception {
+    public TaskService taskService(final TaskRepository taskRepository, final UserService userService)
+            throws Exception {
         return new TaskService(taskRepository, userService);
     }
 }
