@@ -1,14 +1,17 @@
 package com.example.todo.service;
 
+import com.example.todo.entity.Role;
 import com.example.todo.entity.Task;
 import com.example.todo.entity.User;
 import com.example.todo.repository.TaskRepository;
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 public class TaskService {
@@ -20,16 +23,25 @@ public class TaskService {
     }
 
     @Transactional
-    public Task create(Task task, String username) {
+    public ResponseEntity<Task> create(Task task, String username) {
         User owner = userService.findByUsername(username).orElseThrow();
+        if (!canUserCreateOrUpdateTask(owner.getRoles(), task)) {
+            return ResponseEntity.status(403).build();
+        }
         task.setOwner(owner);
-        return taskRepo.save(task);
+        Task createdTask = taskRepo.save(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
 
     @Transactional
     public ResponseEntity<?> update(Long id, Task task, String username) {
         Task existing = taskRepo.findById(id).orElseThrow();
-        if (!existing.getOwner().getUsername().equals(username)) return ResponseEntity.status(403).build();
+        if (!existing.getOwner().getUsername().equals(username))
+            return ResponseEntity.status(403).build();
+
+        if (!canUserCreateOrUpdateTask(existing.getOwner().getRoles(), task)) {
+            return ResponseEntity.status(403).build();
+        }
         existing.setTitle(task.getTitle());
         existing.setDescription(task.getDescription());
         existing.setDone(task.isDone());
@@ -39,8 +51,17 @@ public class TaskService {
     @Transactional
     public ResponseEntity<?> delete(Long id, String username) {
         Task existing = taskRepo.findById(id).orElseThrow();
-        if (!existing.getOwner().getUsername().equals(username)) return ResponseEntity.status(403).build();
+        if (!existing.getOwner().getUsername().equals(username))
+            return ResponseEntity.status(403).build();
         taskRepo.delete(existing);
         return ResponseEntity.noContent().build();
+    }
+
+    private boolean canUserCreateOrUpdateTask(Set<Role> userRoles, Task task) {
+        if (!task.isDone()) {
+            return true;
+        }
+
+        return userRoles.contains(Role.ROLE_ADMIN);
     }
 }

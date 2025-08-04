@@ -23,7 +23,8 @@ import java.util.List;
 public class TaskController {
     @Autowired
     private TaskService taskService;
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public List<Task> listTasks(Principal principal) {
@@ -31,7 +32,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task create(@RequestBody Task task, Principal principal) {
+    public ResponseEntity<Task> create(@RequestBody Task task, Principal principal) {
         return taskService.create(task, principal.getName());
     }
 
