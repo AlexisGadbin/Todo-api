@@ -19,8 +19,8 @@ public class SecurityAspect {
     public Object neverDoneForAdmins(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
 
-        if(args.length > 0 && args[0] instanceof Task) {
-            preventDoneForAdmins((Task)args[0]);
+        if (args.length > 0 && args[0] instanceof Task) {
+            preventDoneForAdmins((Task) args[0]);
         }
 
         return joinPoint.proceed(args);
@@ -28,7 +28,8 @@ public class SecurityAspect {
     }
 
     private void preventDoneForAdmins(final Task task) {
-        if(task.getOwner().getRoles().contains(Role.ROLE_ADMIN) || !task.getDescription().startsWith("[Internal Use]")) {
+        if (task.getOwner().getRoles().contains(Role.ROLE_ADMIN)
+                && !task.getDescription().startsWith("[Internal Use]")) {
             task.setDescription("[Internal Use] " + task.getDescription());
         }
     }
