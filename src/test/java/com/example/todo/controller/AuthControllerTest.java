@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -44,7 +43,6 @@ class AuthControllerTest {
     @Mock
     private Authentication authentication;
 
-    @InjectMocks
     private AuthController authController;
 
     private MockMvc mockMvc;
@@ -52,6 +50,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
+        this.authController = new AuthController(this.userService, this.jwtUtil, this.authenticationManager);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.authController).build();
         this.objectMapper = new ObjectMapper();
     }

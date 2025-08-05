@@ -1,6 +1,8 @@
 package com.example.todo.controller;
 
+import com.example.todo.dto.TaskDTO;
 import com.example.todo.entity.Task;
+import com.example.todo.mapper.TaskMapper;
 import com.example.todo.service.TaskService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,24 +23,32 @@ import java.util.List;
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
-
 public class TaskController {
 
     private final TaskService taskService;
+    private final TaskMapper taskMapper;
 
     @GetMapping
-    public List<Task> listTasks(Principal principal) {
-        return taskService.getTasksForUser(principal.getName());
+    public List<TaskDTO> listTasks(Principal principal) {
+        return this.taskMapper.toDTOList(taskService.getTasksForUser(principal.getName()));
     }
 
     @PostMapping
-    public ResponseEntity<Task> create(@RequestBody Task task, Principal principal) {
-        return taskService.create(task, principal.getName());
+    public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO taskDTO, Principal principal) {
+        Task task = this.taskMapper.toEntity(taskDTO);
+        ResponseEntity<Task> response = taskService.create(task, principal.getName());
+
+        return ResponseEntity.status(response.getStatusCode())
+                .body(this.taskMapper.toDTO(response.getBody()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task task, Principal principal) {
-        return taskService.update(id, task, principal.getName());
+    public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskDTO taskDTO, Principal principal) {
+        Task task = this.taskMapper.toEntity(taskDTO);
+        ResponseEntity<Task> response = taskService.update(id, task, principal.getName());
+
+        return ResponseEntity.status(response.getStatusCode())
+                .body(this.taskMapper.toDTO(response.getBody()));
     }
 
     @DeleteMapping("/{id}")
