@@ -34,7 +34,7 @@ public class TaskService {
     }
 
     @Transactional
-    public ResponseEntity<?> update(Long id, Task task, String username) {
+    public ResponseEntity<Task> update(Long id, Task task, String username) {
         Task existing = taskRepo.findById(id).orElseThrow();
         if (!existing.getOwner().getUsername().equals(username))
             return ResponseEntity.status(403).build();
