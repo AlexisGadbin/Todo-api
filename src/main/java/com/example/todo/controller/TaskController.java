@@ -2,9 +2,9 @@ package com.example.todo.controller;
 
 import com.example.todo.entity.Task;
 import com.example.todo.service.TaskService;
-import com.example.todo.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +20,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
+@RequiredArgsConstructor
+
 public class TaskController {
-    @Autowired
-    private TaskService taskService;
-    @Autowired
-    private UserService userService;
+
+    private final TaskService taskService;
 
     @GetMapping
     public List<Task> listTasks(Principal principal) {
@@ -42,7 +42,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, Principal principal) {
         return taskService.delete(id, principal.getName());
     }
 }

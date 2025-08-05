@@ -49,7 +49,7 @@ public class TaskService {
     }
 
     @Transactional
-    public ResponseEntity<?> delete(Long id, String username) {
+    public ResponseEntity<Void> delete(Long id, String username) {
         Task existing = taskRepo.findById(id).orElseThrow();
         if (!existing.getOwner().getUsername().equals(username))
             return ResponseEntity.status(403).build();
